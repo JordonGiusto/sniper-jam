@@ -251,6 +251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 44995504}
   - component: {fileID: 44995503}
+  - component: {fileID: 44995505}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -290,6 +291,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &44995505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44995502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37bd75fdd3a3234e9d7b908d18a2425, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 0}
+  vignette: {fileID: 0}
 --- !u!1 &671942217
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,21 +715,6 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1077150035}
-    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
-        type: 3}
-      propertyPath: fovScale
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
-        type: 3}
-      propertyPath: viewGrid.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
-        type: 3}
-      propertyPath: viewGrid.y
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 8360256209613453644, guid: 463f9bea3e345f74a8a6befa84ad9441,
         type: 3}
       propertyPath: m_Name
