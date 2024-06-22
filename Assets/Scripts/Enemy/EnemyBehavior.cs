@@ -1,17 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyBehavior : MonoBehaviour
 {
-    Transform eyes;
     [SerializeField]
     Transform player;
     [SerializeField]
     Vector2Int viewGrid;
     [SerializeField]
     float fovScale;
+    [SerializeField]
+    float lockTime;
+
+
+    float currentLock = 0;
+    float rayLockContrib;
     Vector3[] offsets;
+    Transform eyes;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +34,7 @@ public class EnemyBehavior : MonoBehaviour
                 offsets[x * viewGrid.y + y] = fovScale*(new Vector2(x,y)) + botLeft;
             }
         }
+        rayLockContrib = 1 /lockTime/ (viewGrid.x * viewGrid.y);
     }
 
     void Update()
@@ -50,7 +59,19 @@ public class EnemyBehavior : MonoBehaviour
         }
         if(hits > 0)
         {
-            print(hits);
+            currentLock += hits * rayLockContrib * Time.deltaTime;
+        }
+        else
+        {
+            currentLock = Mathf.Lerp(0,currentLock, Mathf.Exp(-0.5f*Time.deltaTime));
+        }
+        PPController.Singleton.volume.weight = 1-Mathf.Exp(-2*currentLock);
+        if(currentLock >= 1) 
+        {
+            print("Bam");
+            PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.red, true));
+            //PPController.Singleton.volume.profile.Reset();
+
         }
         
 
