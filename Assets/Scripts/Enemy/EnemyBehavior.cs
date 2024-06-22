@@ -66,8 +66,9 @@ public class EnemyBehavior : MonoBehaviour
         sm = new StateMachine<States, Commands>(States.Active);
         sm.Addtransition(States.Active, States.Distracted, Commands.Distract);
         sm.Addtransition(States.Distracted, States.Active, Commands.LockIn);
-        sm.stateEnterActions[States.Distracted] += WarningShot;
-        sm.stateUpdateActions[States.Distracted] += (t) =>
+        sm.stateUpdateActions[States.Active] = (t) => Commands.None;
+        sm.stateEnterActions[States.Distracted] = WarningShot;
+        sm.stateUpdateActions[States.Distracted] = (t) =>
         {
             if(sm.timeInState > distractedTime)
             {
@@ -226,7 +227,7 @@ public class StateMachine<S, C> where S: Enum where C : Enum
     }
     public void Addtransition(S fromState, S toState, C trigger) 
     {
-        if (stateTransitions[fromState] == null)
+        if (!stateTransitions.ContainsKey(fromState))
         {
             stateTransitions[fromState] = new Dictionary<C, S>();
         }
