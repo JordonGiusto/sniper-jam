@@ -80,6 +80,15 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grab"",
+                    ""type"": ""Button"",
+                    ""id"": ""c52f6d33-39ce-4f83-9a11-2084d4442b65"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -366,6 +375,28 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""49eeb3b1-2d20-406e-89ef-3938deeeeb76"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Grab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25a2e78f-beea-4430-afe2-6be14d45f8c0"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -959,6 +990,7 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Drop = m_Player.FindAction("Drop", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1038,6 +1070,7 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Drop;
     private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_Grab;
     public struct PlayerActions
     {
         private @Sniperjam m_Wrapper;
@@ -1048,6 +1081,7 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @Drop => m_Wrapper.m_Player_Drop;
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1075,6 +1109,9 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
+            @Grab.started += instance.OnGrab;
+            @Grab.performed += instance.OnGrab;
+            @Grab.canceled += instance.OnGrab;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1097,6 +1134,9 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
+            @Grab.started -= instance.OnGrab;
+            @Grab.performed -= instance.OnGrab;
+            @Grab.canceled -= instance.OnGrab;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1285,6 +1325,7 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnGrab(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
