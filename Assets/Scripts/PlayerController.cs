@@ -8,16 +8,34 @@ public class PlayerController : MonoBehaviour
     public float maxAcceleration, maxSpeed;
 
 
+    public Sniperjam sj;
+
     Rigidbody rb;
 
     Vector3 currentSpeed;
     Vector2 currentMoveInput;
     Vector2 currentLookInput;
+
+    public float mouseSense;
+
+    public Camera cam;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        sj =  new Sniperjam();
+        sj.Enable();
         rb = GetComponent<Rigidbody>();
         currentSpeed = Vector3.zero;
+
+        sj.Player.Move.performed += handleMoveInput;
+        sj.Player.Move.canceled += handleMoveInput;
+        sj.Player.Look.performed += handleLookInput;
+        sj.Player.Look.canceled += handleLookInput;
+
+        Cursor.lockState = CursorLockMode.Locked;
+
     }
 
     // Update is called once per frame
@@ -32,6 +50,20 @@ public class PlayerController : MonoBehaviour
 
     public void aimUpdate()
     {
+        transform.Rotate(Vector3.up, mouseSense * currentLookInput.x);
+
+        float currentCamRotation = (cam.transform.localRotation.eulerAngles.x + 90) % 360;
+
+        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y, 10, 170);
+
+
+
+
+        cam.transform.rotation = Quaternion.Euler(targetCamRotation - 90, cam.transform.rotation.eulerAngles.y, cam.transform.eulerAngles.z);
+
+        print(targetCamRotation);
+
+
 
     }
 
@@ -47,6 +79,7 @@ public class PlayerController : MonoBehaviour
         v2CurrentSpeed += acceleration;
         currentSpeed.x = v2CurrentSpeed.x;
         currentSpeed.z = v2CurrentSpeed.y;
+        currentSpeed.y = rb.velocity.y;
 
 
         rb.velocity = currentSpeed;
