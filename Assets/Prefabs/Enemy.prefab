@@ -152,3 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb2fcb16a972ac4fb11ff14bff134f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  viewGrid: {x: 5, y: 5}
+  fovScale: 0.2
+  lockTime: 2
+  distractedTime: 1
