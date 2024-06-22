@@ -118,4 +118,16 @@ public class PlayerController : MonoBehaviour
             crouched = false;
         }
     }
+
+    public void handleADSInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
 }
