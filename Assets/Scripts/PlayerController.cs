@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -28,9 +31,21 @@ public class PlayerController : MonoBehaviour
 
     bool crouched;
 
+    public TextMeshProUGUI interactText;
+
+    public float interactDistance, holdDistance;
+
+    public bool aimedDownSights = false;
+    
+    Throwable heldObject = null;
+
+    public GameObject gun;
+    bool hasGun = false;
+
     // Start is called before the first frame update
     void Start()
     {
+        gun.SetActive(false);
         sj =  new Sniperjam();
         sj.Enable();
         rb = GetComponent<Rigidbody>();
@@ -39,6 +54,7 @@ public class PlayerController : MonoBehaviour
 
         sj.Player.Move.performed += handleMoveInput;
         sj.Player.Move.canceled += handleMoveInput;
+
         sj.Player.Look.performed += handleLookInput;
         sj.Player.Look.canceled += handleLookInput;
 
@@ -48,10 +64,19 @@ public class PlayerController : MonoBehaviour
         sj.Player.Aim.canceled += handleADSInput;
         sj.Player.Aim.performed += handleADSInput;
 
+        sj.Player.Grab.performed += handleGrabInput;
+
+        sj.Player.Drop.performed += handleDropInput;
+
+
+        sj.Player.Fire.performed += handleFireInput;
+
 
         Cursor.lockState = CursorLockMode.Locked;
 
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -59,11 +84,38 @@ public class PlayerController : MonoBehaviour
         movementUpdate();
        
         aimUpdate();
+
+        interactUpdate();
         
     }
 
+    void interactUpdate()
+    {
+        if(heldObject != null)
+        {
+            heldObject.transform.position = cam.transform.position + cam.transform.forward * holdDistance;
+            
+        }
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        if(heldObject == null && Physics.Raycast(ray, out RaycastHit hit, interactDistance) && hit.collider.TryGetComponent(out Interactable i))
+        {
+            if(i.TryGetComponent(out Throwable t))
+            {
+                interactText.text = i.text + ": press E to pick up";
+            }
+            if (i.CompareTag("gun"))
+            {
+                interactText.text = i.text + ": press E equip";
 
-    public void aimUpdate()
+            }
+        }
+        else
+        {
+            interactText.text = "";
+        }
+    }
+
+    private void aimUpdate()
     {
         transform.Rotate(Vector3.up, mouseSense * currentLookInput.x);
 
@@ -76,13 +128,12 @@ public class PlayerController : MonoBehaviour
 
         cam.transform.rotation = Quaternion.Euler(targetCamRotation - 90, cam.transform.rotation.eulerAngles.y, cam.transform.eulerAngles.z);
 
-        print(targetCamRotation);
 
 
 
     }
 
-    public void movementUpdate()
+    private void movementUpdate()
     {
         Vector3 transformedInput = transform.TransformDirection(new Vector3(currentMoveInput.x, 0, currentMoveInput.y));
 
@@ -101,16 +152,16 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void handleMoveInput(InputAction.CallbackContext context)
+    private void handleMoveInput(InputAction.CallbackContext context)
     {
         currentMoveInput = context.ReadValue<Vector2>();
     }
-    public void handleLookInput(InputAction.CallbackContext context)
+    private void handleLookInput(InputAction.CallbackContext context)
     {
         currentLookInput = context.ReadValue<Vector2>();
     }
 
-    public void handleCrouchInput(InputAction.CallbackContext context)
+    private void handleCrouchInput(InputAction.CallbackContext context)
     {
         
         if (context.performed)
@@ -125,18 +176,56 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void handleADSInput(InputAction.CallbackContext context)
+    private void handleADSInput(InputAction.CallbackContext context)
     {
+        if(!hasGun) return;
         if (context.performed)
         {
-            scope.SetActive(true);
-            cam.fieldOfView = 20;
+            animator.SetTrigger("ADS");
 
         }
         else
         {
-            cam.fieldOfView = 60;
-            scope.SetActive(false);
+            animator.SetTrigger("unADS");
+
         }
     }
+
+    private void handleGrabInput(InputAction.CallbackContext context)
+    {
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+        {
+            if(hit.collider.TryGetComponent(out Throwable i))
+            {
+                heldObject = i;
+                i.pickUp();
+            }
+            else if (hit.collider.CompareTag("gun"))
+            {
+                gun.SetActive(true);
+                hasGun = true;
+                Destroy(hit.collider.gameObject);
+            }
+      
+        }
+        
+    }
+
+    private void handleDropInput(InputAction.CallbackContext context)
+    {
+        if(heldObject == null) return;
+        heldObject.interact(cam.transform.forward);
+        heldObject = null;
+    }
+
+    private void handleFireInput(InputAction.CallbackContext context)
+    {
+        if (!aimedDownSights || !hasGun)
+        {
+            return;
+        }
+    }
+
 }
