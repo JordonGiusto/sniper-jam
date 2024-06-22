@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
     public float maxAcceleration, maxSpeed, crouchSpeed;
 
 
+    public GameObject scope;
+
+
     public Sniperjam sj;
 
     Rigidbody rb;
@@ -41,6 +44,9 @@ public class PlayerController : MonoBehaviour
 
         sj.Player.Crouch.performed += handleCrouchInput;
         sj.Player.Crouch.canceled += handleCrouchInput;
+
+        sj.Player.Aim.canceled += handleADSInput;
+        sj.Player.Aim.performed += handleADSInput;
 
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -123,11 +129,14 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
+            scope.SetActive(true);
+            cam.fieldOfView = 20;
 
         }
         else
         {
-
+            cam.fieldOfView = 60;
+            scope.SetActive(false);
         }
     }
 }
