@@ -26,11 +26,14 @@ public class EnemyBehavior : MonoBehaviour
     float distractedTime;
     [SerializeField]
     float reloadTime;
-
+    [SerializeField]
+    GameObject impact;
 
     float currentLock = 0;
     float rayLockContrib;
     Vector3[] offsets;
+
+    AudioSource audioSource;
     Transform eyes;
     StateMachine<States, Commands> sm;
 
@@ -54,6 +57,7 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         eyes = transform.Find("Eyes");
         offsets = new Vector3[viewGrid.x*viewGrid.y];
         Vector2 botLeft = (Vector2)(-viewGrid+Vector2Int.one) * 0.5f*fovScale;
@@ -165,26 +169,33 @@ public class EnemyBehavior : MonoBehaviour
         
         if(currentLock >= 1) 
         {
-            
-            triggerQueue.Enqueue(Commands.Reload);
-
-            float hitProb = ((float)hits)/viewGrid.x/viewGrid.y;
-
-            if(UnityEngine.Random.value < hitProb)
-            {
-                playerController.TakeHit();
-            }
-            else
-            {
-                currentLock = 0.2f;
-                playerController.UpdateObservation(currentLock);
-            }
-            
-
+            TakeShot(hits);
         }
 
         transform.LookAt(player);
         return hits;
+    }
+    void TakeShot(int hits)
+    {
+        
+        audioSource.Play();
+        triggerQueue.Enqueue(Commands.Reload);
+
+        float hitProb = 0.8f*((float)hits) / viewGrid.x / viewGrid.y+0.1f;
+
+        if (UnityEngine.Random.value < hitProb)
+        {
+            playerController.TakeHit();
+        }
+        else
+        {
+            currentLock = 0.2f;
+            playerController.UpdateObservation(currentLock);
+            Vector3 toPlayer = player.position - eyes.position;
+            Vector3 o = UnityEngine.Random.insideUnitCircle * fovScale * viewGrid.y * (1 + UnityEngine.Random.value);
+            Physics.Raycast(eyes.position, (Quaternion.LookRotation(toPlayer.normalized) * o / toPlayer.magnitude + toPlayer.normalized), out RaycastHit info);
+            Instantiate(impact, info.point, Quaternion.identity);
+        }
     }
     void WarningShot()
     {
