@@ -165,26 +165,27 @@ public class EnemyBehavior : MonoBehaviour
         
         if(currentLock >= 1) 
         {
-            
-            triggerQueue.Enqueue(Commands.Reload);
-
-            float hitProb = ((float)hits)/viewGrid.x/viewGrid.y;
-
-            if(UnityEngine.Random.value < hitProb)
-            {
-                playerController.TakeHit();
-            }
-            else
-            {
-                currentLock = 0.2f;
-                playerController.UpdateObservation(currentLock);
-            }
-            
-
+            TakeShot(hits);
         }
 
         transform.LookAt(player);
         return hits;
+    }
+    void TakeShot(int hits)
+    {
+        triggerQueue.Enqueue(Commands.Reload);
+
+        float hitProb = 0.8f*((float)hits) / viewGrid.x / viewGrid.y+0.1f;
+
+        if (UnityEngine.Random.value < hitProb)
+        {
+            playerController.TakeHit();
+        }
+        else
+        {
+            currentLock = 0.2f;
+            playerController.UpdateObservation(currentLock);
+        }
     }
     void WarningShot()
     {
