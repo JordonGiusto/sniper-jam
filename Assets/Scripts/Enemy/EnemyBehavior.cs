@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
@@ -167,7 +168,18 @@ public class EnemyBehavior : MonoBehaviour
             
             triggerQueue.Enqueue(Commands.Reload);
 
-            playerController.TakeHit();
+            float hitProb = ((float)hits)/viewGrid.x/viewGrid.y;
+
+            if(UnityEngine.Random.value < hitProb)
+            {
+                playerController.TakeHit();
+            }
+            else
+            {
+                currentLock = 0.2f;
+                playerController.UpdateObservation(currentLock);
+            }
+            
 
         }
 

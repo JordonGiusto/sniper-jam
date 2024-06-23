@@ -9,6 +9,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField]
+    int health;
+
+
     public float maxAcceleration, maxSpeed, crouchSpeed;
 
     public float relaodTime;
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
     float hitLevel = 0f;
     float enemyLockLevel = 0f;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -274,6 +279,11 @@ public class PlayerController : MonoBehaviour
     public void TakeHit()
     {
         hitLevel = 1;
+        health -= 1;
+        if(health <= 0)
+        {
+            print("You died");
+        }
     }
 
 }
