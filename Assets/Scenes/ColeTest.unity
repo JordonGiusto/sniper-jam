@@ -586,6 +586,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MissedShot
       objectReference: {fileID: 0}
+    - target: {fileID: 1571963703911305113, guid: b151170def781f146ad2df1a9d69e274,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2208499769356773670, guid: b151170def781f146ad2df1a9d69e274,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -636,26 +641,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2960531820332841895, guid: b151170def781f146ad2df1a9d69e274,
-        type: 3}
-      propertyPath: audioClips.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2960531820332841895, guid: b151170def781f146ad2df1a9d69e274,
-        type: 3}
-      propertyPath: audioClips.Array.data[0]
-      value: 
-      objectReference: {fileID: 8300000, guid: 9323fe026d74e6f48964dd2daf8f5b44, type: 3}
-    - target: {fileID: 2960531820332841895, guid: b151170def781f146ad2df1a9d69e274,
-        type: 3}
-      propertyPath: audioClips.Array.data[1]
-      value: 
-      objectReference: {fileID: 8300000, guid: 84371b1a7634dd743870b481a45031fa, type: 3}
-    - target: {fileID: 2960531820332841895, guid: b151170def781f146ad2df1a9d69e274,
-        type: 3}
-      propertyPath: audioClips.Array.data[2]
-      value: 
-      objectReference: {fileID: 8300000, guid: 6277cc0e5fb34914ea3c959c9a71c6e2, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -824,6 +809,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
+        type: 3}
+      propertyPath: impact
+      value: 
+      objectReference: {fileID: 1571963703911305113, guid: b151170def781f146ad2df1a9d69e274,
+        type: 3}
     - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
         type: 3}
       propertyPath: player

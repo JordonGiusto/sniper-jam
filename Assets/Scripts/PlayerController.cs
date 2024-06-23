@@ -31,6 +31,27 @@ public class PlayerController : MonoBehaviour
 
     public float mouseSense;
 
+    [SerializeField]
+    AudioSource heart;
+    [SerializeField]
+    AudioSource breathing;
+    [SerializeField]
+    AudioSource impact;
+    float hr = 1;
+    float Heartbeat
+    {
+        get => hr;
+        set
+        {
+            hr = value;
+            heart.outputAudioMixerGroup.audioMixer.SetFloat("Speed", hr/60);
+            heart.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 60/hr);
+            heart.volume = 0.4f*hr / 60;
+
+
+
+        }
+    }
 
     Animator animator;
 
@@ -57,6 +78,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Heartbeat = 60;
+
         gun.SetActive(false);
         sj =  new Sniperjam();
         sj.Enable();
@@ -110,8 +133,9 @@ public class PlayerController : MonoBehaviour
 
     private void UIUpdate()
     {
-        hitLevel -= 0.5f*Time.deltaTime;
+        hitLevel -= 0.08f*Time.deltaTime;
         hitLevel = hitLevel < 0 ? 0 : hitLevel;
+        Heartbeat = 60 + 60*(hitLevel);
 
         PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * (enemyLockLevel + hitLevel));
         PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.Lerp(Color.black, Color.red, hitLevel), true));
@@ -281,12 +305,16 @@ public class PlayerController : MonoBehaviour
     }
     public void TakeHit()
     {
+        
         hitLevel = 1;
         health -= 1;
         if(health <= 0)
         {
             print("You died");
         }
+
+        breathing.Play();
+        impact.Play();
     }
 
 }
