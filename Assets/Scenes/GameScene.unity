@@ -162,7 +162,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3307754}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 1
+  weight: 0
   sharedProfile: {fileID: 11400000, guid: b45183aed6b7d4564988f2adcfe43196, type: 2}
 --- !u!4 &3307757
 Transform:
@@ -320,6 +320,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1215063792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &201793574 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 128683391245444837, guid: 0a6b37cbeb91a1b43ba9d9bfe5e30e22,
+    type: 3}
+  m_PrefabInstance: {fileID: 1991266420}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a37447b26a89b843a3245c4095e7caa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &225075963
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,6 +876,11 @@ PrefabInstance:
       propertyPath: lockTime
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 201793574}
     - target: {fileID: 8360256209613453644, guid: 463f9bea3e345f74a8a6befa84ad9441,
         type: 3}
       propertyPath: m_Name

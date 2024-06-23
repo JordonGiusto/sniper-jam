@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour
         hitLevel -= 0.5f*Time.deltaTime;
         hitLevel = hitLevel < 0 ? 0 : hitLevel;
 
-        PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * enemyLockLevel);
+        PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * (enemyLockLevel + hitLevel));
         PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.Lerp(Color.black, Color.red, hitLevel), true));
 
 
@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.TryGetComponent(out EnemyBehavior e))
+            if (hit.collider.transform.parent.TryGetComponent(out EnemyBehavior e))
             {
                 print("hit enemy");
             }

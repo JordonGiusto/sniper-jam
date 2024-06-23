@@ -12,6 +12,10 @@ public class EnemyBehavior : MonoBehaviour
     PlayerController playerController;
 
     [SerializeField]
+    Transform player;
+
+
+    [SerializeField]
     Vector2Int viewGrid;
     [SerializeField]
     float fovScale;
@@ -22,7 +26,6 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField]
     float reloadTime;
 
-    Transform player;
 
     float currentLock = 0;
     float rayLockContrib;
@@ -50,7 +53,6 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = playerController.transform;
         eyes = transform.Find("Eyes");
         offsets = new Vector3[viewGrid.x*viewGrid.y];
         Vector2 botLeft = (Vector2)(-viewGrid+Vector2Int.one) * 0.5f*fovScale;

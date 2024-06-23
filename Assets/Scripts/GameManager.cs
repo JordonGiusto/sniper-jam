@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     }
     public void playButton()
     {
-        SceneManager.LoadScene("GameSceme");
+        SceneManager.LoadScene("GameScene");
     }
     public void controlsButton()
     {
