@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 {
     public float maxAcceleration, maxSpeed, crouchSpeed;
 
+    public float relaodTime;
+    float timeSinceFired;
 
     public GameObject scope;
 
@@ -74,6 +76,7 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
 
+        
     }
 
 
@@ -86,6 +89,8 @@ public class PlayerController : MonoBehaviour
         aimUpdate();
 
         interactUpdate();
+
+        timeSinceFired += Time.deltaTime;
         
     }
 
@@ -117,11 +122,11 @@ public class PlayerController : MonoBehaviour
 
     private void aimUpdate()
     {
-        transform.Rotate(Vector3.up, mouseSense * currentLookInput.x);
+        transform.Rotate(Vector3.up, mouseSense * currentLookInput.x * (aimedDownSights ? .4f : 1f));
 
         float currentCamRotation = (cam.transform.localRotation.eulerAngles.x + 90) % 360;
 
-        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y, 10, 170);
+        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y * (aimedDownSights ? .5f : 1f), 10, 170);
 
 
 
@@ -226,6 +231,24 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+        if(timeSinceFired < relaodTime) return;
+
+        timeSinceFired = 0;
+
+
+
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.TryGetComponent(out EnemyBehavior e))
+            {
+                print("hit enemy");
+            }
+
+        }
+
+
     }
 
 }
