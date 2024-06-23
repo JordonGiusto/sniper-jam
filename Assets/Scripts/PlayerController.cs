@@ -51,7 +51,8 @@ public class PlayerController : MonoBehaviour
 
     float hitLevel = 0f;
     float enemyLockLevel = 0f;
-    
+
+    float camXRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +63,9 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         currentSpeed = Vector3.zero;
+
+
+        camXRotation = cam.transform.rotation.eulerAngles.x;
 
         sj.Player.Move.performed += handleMoveInput;
         sj.Player.Move.canceled += handleMoveInput;
@@ -145,14 +149,14 @@ public class PlayerController : MonoBehaviour
     {
         transform.Rotate(Vector3.up, mouseSense * currentLookInput.x * (aimedDownSights ? .4f : 1f));
 
-        float currentCamRotation = (cam.transform.localRotation.eulerAngles.x + 90) % 360;
-
-        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y * (aimedDownSights ? .5f : 1f), 10, 170);
 
 
+        camXRotation = Mathf.Clamp(camXRotation - mouseSense * currentLookInput.y * (aimedDownSights ? .5f : 1f), -80, 80);
 
 
-        cam.transform.rotation = Quaternion.Euler(targetCamRotation - 90, cam.transform.rotation.eulerAngles.y, cam.transform.eulerAngles.z);
+
+
+        cam.transform.localRotation = Quaternion.Euler(camXRotation, cam.transform.localRotation.eulerAngles.y, cam.transform.localRotation.eulerAngles.z);
 
 
 
@@ -256,7 +260,7 @@ public class PlayerController : MonoBehaviour
 
         timeSinceFired = 0;
 
-
+        animator.SetTrigger("fire");
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
 
@@ -264,7 +268,6 @@ public class PlayerController : MonoBehaviour
         {
             if (hit.collider.transform.parent.TryGetComponent(out EnemyBehavior e))
             {
-                print("hit enemy");
             }
 
         }
