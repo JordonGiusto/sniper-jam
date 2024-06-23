@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
@@ -41,6 +42,9 @@ public class PlayerController : MonoBehaviour
 
     public GameObject gun;
     bool hasGun = false;
+
+    float hitLevel = 0f;
+    float enemyLockLevel = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -86,7 +90,20 @@ public class PlayerController : MonoBehaviour
         aimUpdate();
 
         interactUpdate();
+
+        UIUpdate();
         
+    }
+
+    private void UIUpdate()
+    {
+        hitLevel -= 0.5f*Time.deltaTime;
+        hitLevel = hitLevel < 0 ? 0 : hitLevel;
+
+        PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * enemyLockLevel);
+        PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.Lerp(Color.black, Color.red, hitLevel), true));
+
+
     }
 
     void interactUpdate()
@@ -226,6 +243,15 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+    }
+    
+    public void UpdateObservation(float lockLevel)
+    {
+        enemyLockLevel = lockLevel;
+    }
+    public void TakeHit()
+    {
+        hitLevel = 1;
     }
 
 }

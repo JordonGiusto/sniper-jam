@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 5616212106719979657}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.714}
+  m_LocalPosition: {x: 0, y: 0, z: 0.583}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -183,8 +183,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb2fcb16a972ac4fb11ff14bff134f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  playerController: {fileID: 0}
   viewGrid: {x: 5, y: 5}
   fovScale: 0.2
-  lockTime: 2
+  lockTime: 4
   distractedTime: 1
+  reloadTime: 3

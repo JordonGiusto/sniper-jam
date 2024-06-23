@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
@@ -8,7 +9,8 @@ using UnityEngine.Rendering;
 public class EnemyBehavior : MonoBehaviour
 {
     [SerializeField]
-    Transform player;
+    PlayerController playerController;
+
     [SerializeField]
     Vector2Int viewGrid;
     [SerializeField]
@@ -17,7 +19,10 @@ public class EnemyBehavior : MonoBehaviour
     float lockTime;
     [SerializeField]
     float distractedTime;
+    [SerializeField]
+    float reloadTime;
 
+    Transform player;
 
     float currentLock = 0;
     float rayLockContrib;
@@ -45,6 +50,7 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = playerController.transform;
         eyes = transform.Find("Eyes");
         offsets = new Vector3[viewGrid.x*viewGrid.y];
         Vector2 botLeft = (Vector2)(-viewGrid+Vector2Int.one) * 0.5f*fovScale;
@@ -63,12 +69,19 @@ public class EnemyBehavior : MonoBehaviour
 
     void CreateStateMachine()
     {
-        sm = new StateMachine<States, Commands>(States.Active);
+        sm = new StateMachine<States, Commands>(States.Active, Commands.None, States.Reloading, States.Distracted);
         sm.Addtransition(States.Active, States.Distracted, Commands.Distract);
         sm.Addtransition(States.Distracted, States.Active, Commands.LockIn);
-        sm.stateUpdateActions[States.Active] = (t) => Commands.None;
-        sm.stateEnterActions[States.Distracted] = WarningShot;
-        sm.stateUpdateActions[States.Distracted] = (t) =>
+        sm.Addtransition(States.Active, States.Reloading, Commands.Reload);
+        sm.Addtransition(States.Reloading, States.Active, Commands.LockIn);
+
+        sm.stateEnterActions[States.Reloading] += () => { StartCoroutine(ReloadRoutine()); };
+
+
+        sm.stateUpdateActions[States.Active] += (t) => Commands.None;
+
+        sm.stateEnterActions[States.Distracted] += WarningShot;
+        sm.stateUpdateActions[States.Distracted] += (t) =>
         {
             if(sm.timeInState > distractedTime)
             {
@@ -89,10 +102,30 @@ public class EnemyBehavior : MonoBehaviour
                 break;
             case States.Distracted:
                 break;
+            case States.Reloading:
+
+                break;
             default:
                 break;
         }
         
+
+    }
+    IEnumerator ReloadRoutine()
+    {
+        currentLock = 0.2f;
+        while (true)
+        {
+            playerController.UpdateObservation(currentLock);
+            
+            if (sm.timeInState >= reloadTime)
+            {
+                triggerQueue.Enqueue(Commands.LockIn);
+                yield break;
+            }
+
+            yield return null;
+        }
 
     }
     void UpdateStateMachine()
@@ -125,16 +158,18 @@ public class EnemyBehavior : MonoBehaviour
         {
             currentLock = Mathf.Lerp(0,currentLock, Mathf.Exp(-0.5f*Time.deltaTime));
         }
-        PPController.Singleton.volume.weight = 1-Mathf.Exp(-2*currentLock);
+        playerController.UpdateObservation(currentLock);
+        
         if(currentLock >= 1) 
         {
-            print("Bam");
-            PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.red, true));
-            //PPController.Singleton.volume.profile.Reset();
+            
+            triggerQueue.Enqueue(Commands.Reload);
+
+            playerController.TakeHit();
 
         }
-        
 
+        transform.LookAt(player);
         return hits;
     }
     void WarningShot()
@@ -158,7 +193,8 @@ public class EnemyBehavior : MonoBehaviour
     enum States
     {
         Active,
-        Distracted
+        Distracted,
+        Reloading,
     }
     enum Commands
     {
@@ -166,6 +202,7 @@ public class EnemyBehavior : MonoBehaviour
         Distract,
         LockIn,
         Attack,
+        Reload,
     }
 }
 
@@ -184,7 +221,7 @@ public class StateMachine<S, C> where S: Enum where C : Enum
 
 
 
-    public StateMachine(S _defaultState)
+    public StateMachine(S _defaultState, C nullCommand, params S[] states)
     {
         stateTransitions = new Dictionary<S, Dictionary<C, S>>();
         stateEnterActions = new Dictionary<S, Action>();
@@ -194,6 +231,16 @@ public class StateMachine<S, C> where S: Enum where C : Enum
         defaultState = _defaultState;
         timeInState = 0;
         currentState = defaultState;
+
+        stateEnterActions[defaultState] = () => { };
+        stateUpdateActions[defaultState] = (t) => nullCommand;
+        stateExitActions[defaultState] = () => { timeInState = 0; };
+        foreach(S s in states)
+        {
+            stateEnterActions[s] = () => { };
+            stateUpdateActions[s] = (t) => nullCommand;
+            stateExitActions[s] = () => { timeInState = 0; };
+        }
     }
     
 
