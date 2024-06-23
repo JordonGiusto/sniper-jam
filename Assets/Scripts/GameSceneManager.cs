@@ -13,6 +13,12 @@ public class GameSceneManager : MonoBehaviour
 
     List<TextMeshProUGUI> text;
 
+
+    public GameObject spawnLocations;
+
+    public GameObject sniper;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +27,14 @@ public class GameSceneManager : MonoBehaviour
         startTime = Time.time;
 
         text = new List<TextMeshProUGUI>(startScreen.transform.GetComponentsInChildren<TextMeshProUGUI>());
+
+        Vector3 sniperSpawn = spawnLocations.transform.GetChild(Random.Range(0, spawnLocations.transform.childCount)).position;
+
+        sniper.transform.position = sniperSpawn;
+
+
+    
+    
     }
 
     // Update is called once per frame
