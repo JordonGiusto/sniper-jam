@@ -31,6 +31,8 @@ public class EnemyBehavior : MonoBehaviour
     float currentLock = 0;
     float rayLockContrib;
     Vector3[] offsets;
+
+    AudioSource audioSource;
     Transform eyes;
     StateMachine<States, Commands> sm;
 
@@ -54,6 +56,7 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         eyes = transform.Find("Eyes");
         offsets = new Vector3[viewGrid.x*viewGrid.y];
         Vector2 botLeft = (Vector2)(-viewGrid+Vector2Int.one) * 0.5f*fovScale;
@@ -173,6 +176,8 @@ public class EnemyBehavior : MonoBehaviour
     }
     void TakeShot(int hits)
     {
+        
+        audioSource.Play();
         triggerQueue.Enqueue(Commands.Reload);
 
         float hitProb = 0.8f*((float)hits) / viewGrid.x / viewGrid.y+0.1f;
