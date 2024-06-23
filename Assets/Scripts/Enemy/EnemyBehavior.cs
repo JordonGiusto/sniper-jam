@@ -218,6 +218,11 @@ public class EnemyBehavior : MonoBehaviour
        
     }
 
+    internal void die()
+    {
+        Destroy(gameObject);
+    }
+
     enum States
     {
         Active,
