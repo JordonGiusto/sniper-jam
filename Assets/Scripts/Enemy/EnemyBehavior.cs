@@ -33,6 +33,9 @@ public class EnemyBehavior : MonoBehaviour
     float rayLockContrib;
     Vector3[] offsets;
 
+
+    
+
     AudioSource audioSource;
     Transform eyes;
     StateMachine<States, Commands> sm;
