@@ -6,6 +6,7 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -67,24 +68,7 @@ public class PlayerController : MonoBehaviour
 
         camXRotation = cam.transform.rotation.eulerAngles.x;
 
-        sj.Player.Move.performed += handleMoveInput;
-        sj.Player.Move.canceled += handleMoveInput;
-
-        sj.Player.Look.performed += handleLookInput;
-        sj.Player.Look.canceled += handleLookInput;
-
-        sj.Player.Crouch.performed += handleCrouchInput;
-        sj.Player.Crouch.canceled += handleCrouchInput;
-
-        sj.Player.Aim.canceled += handleADSInput;
-        sj.Player.Aim.performed += handleADSInput;
-
-        sj.Player.Grab.performed += handleGrabInput;
-
-        sj.Player.Drop.performed += handleDropInput;
-
-
-        sj.Player.Fire.performed += handleFireInput;
+        sunbscribeEvents();
 
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -268,24 +252,83 @@ public class PlayerController : MonoBehaviour
         {
             if (hit.collider.transform.parent.TryGetComponent(out EnemyBehavior e))
             {
+                e.die();
+                StartCoroutine(enterWinSceenAfterSeconds(3));
             }
 
         }
 
 
     }
+
+
+    IEnumerator enterWinSceenAfterSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        unsubscribeEvents();
+        Cursor.lockState = CursorLockMode.None;
+
+        SceneManager.LoadScene("WinScreen");
+    }
     
     public void UpdateObservation(float lockLevel)
     {
         enemyLockLevel = lockLevel;
     }
+
+    void unsubscribeEvents()
+    {
+        sj.Player.Move.performed -= handleMoveInput;
+        sj.Player.Move.canceled -= handleMoveInput;
+
+        sj.Player.Look.performed -= handleLookInput;
+        sj.Player.Look.canceled -= handleLookInput;
+
+        sj.Player.Crouch.performed -= handleCrouchInput;
+        sj.Player.Crouch.canceled -= handleCrouchInput;
+
+        sj.Player.Aim.canceled -= handleADSInput;
+        sj.Player.Aim.performed -= handleADSInput;
+
+        sj.Player.Grab.performed -= handleGrabInput;
+
+        sj.Player.Drop.performed -= handleDropInput;
+
+
+        sj.Player.Fire.performed -= handleFireInput;
+    }
+    void sunbscribeEvents()
+    {
+        sj.Player.Move.performed += handleMoveInput;
+        sj.Player.Move.canceled += handleMoveInput;
+
+        sj.Player.Look.performed += handleLookInput;
+        sj.Player.Look.canceled += handleLookInput;
+
+        sj.Player.Crouch.performed += handleCrouchInput;
+        sj.Player.Crouch.canceled += handleCrouchInput;
+
+        sj.Player.Aim.canceled += handleADSInput;
+        sj.Player.Aim.performed += handleADSInput;
+
+        sj.Player.Grab.performed += handleGrabInput;
+
+        sj.Player.Drop.performed += handleDropInput;
+
+
+        sj.Player.Fire.performed += handleFireInput;
+    }
+
     public void TakeHit()
     {
         hitLevel = 1;
         health -= 1;
         if(health <= 0)
         {
-            print("You died");
+            unsubscribeEvents();
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadScene("LoseScreen");
         }
     }
 
