@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
@@ -10,6 +11,8 @@ public class PlayerController : MonoBehaviour
 {
     public float maxAcceleration, maxSpeed, crouchSpeed;
 
+    public float relaodTime;
+    float timeSinceFired;
 
     public GameObject scope;
 
@@ -41,6 +44,9 @@ public class PlayerController : MonoBehaviour
 
     public GameObject gun;
     bool hasGun = false;
+
+    float hitLevel = 0f;
+    float enemyLockLevel = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +80,7 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
 
+        
     }
 
 
@@ -86,7 +93,21 @@ public class PlayerController : MonoBehaviour
         aimUpdate();
 
         interactUpdate();
+
+        timeSinceFired += Time.deltaTime;
+        UIUpdate();
         
+    }
+
+    private void UIUpdate()
+    {
+        hitLevel -= 0.5f*Time.deltaTime;
+        hitLevel = hitLevel < 0 ? 0 : hitLevel;
+
+        PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * enemyLockLevel);
+        PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.Lerp(Color.black, Color.red, hitLevel), true));
+
+
     }
 
     void interactUpdate()
@@ -117,11 +138,11 @@ public class PlayerController : MonoBehaviour
 
     private void aimUpdate()
     {
-        transform.Rotate(Vector3.up, mouseSense * currentLookInput.x);
+        transform.Rotate(Vector3.up, mouseSense * currentLookInput.x * (aimedDownSights ? .4f : 1f));
 
         float currentCamRotation = (cam.transform.localRotation.eulerAngles.x + 90) % 360;
 
-        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y, 10, 170);
+        float targetCamRotation = Mathf.Clamp(currentCamRotation - mouseSense * currentLookInput.y * (aimedDownSights ? .5f : 1f), 10, 170);
 
 
 
@@ -226,6 +247,33 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+        if(timeSinceFired < relaodTime) return;
+
+        timeSinceFired = 0;
+
+
+
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.TryGetComponent(out EnemyBehavior e))
+            {
+                print("hit enemy");
+            }
+
+        }
+
+
+    }
+    
+    public void UpdateObservation(float lockLevel)
+    {
+        enemyLockLevel = lockLevel;
+    }
+    public void TakeHit()
+    {
+        hitLevel = 1;
     }
 
 }
