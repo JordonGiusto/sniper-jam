@@ -26,7 +26,8 @@ public class EnemyBehavior : MonoBehaviour
     float distractedTime;
     [SerializeField]
     float reloadTime;
-
+    [SerializeField]
+    GameObject impact;
 
     float currentLock = 0;
     float rayLockContrib;
@@ -190,6 +191,10 @@ public class EnemyBehavior : MonoBehaviour
         {
             currentLock = 0.2f;
             playerController.UpdateObservation(currentLock);
+            Vector3 toPlayer = player.position - eyes.position;
+            Vector3 o = UnityEngine.Random.insideUnitCircle * fovScale * viewGrid.y * (1 + UnityEngine.Random.value);
+            Physics.Raycast(eyes.position, (Quaternion.LookRotation(toPlayer.normalized) * o / toPlayer.magnitude + toPlayer.normalized), out RaycastHit info);
+            Instantiate(impact, info.point, Quaternion.identity);
         }
     }
     void WarningShot()
