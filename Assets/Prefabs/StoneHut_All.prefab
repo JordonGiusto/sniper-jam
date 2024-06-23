@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 700556126201380106}
   - component: {fileID: 2841995954503050751}
   - component: {fileID: 4926803825033449221}
+  - component: {fileID: 404961001094207461}
   m_Layer: 0
   m_Name: StoneHut_All
   m_TagString: Untagged
@@ -191,5 +192,26 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.052789032, y: 0.022011116, z: 0.004067458}
-  m_Center: {x: 0.0013087615, y: 0.00010504108, z: 0.024704304}
+  m_Size: {x: 0.021865126, y: 0.022011116, z: 0.004067458}
+  m_Center: {x: 0.016770715, y: 0.00010504108, z: 0.024704304}
+--- !u!65 &404961001094207461
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4468902760640619841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.022556107, y: 0.022011116, z: 0.004067458}
+  m_Center: {x: -0.017257994, y: 0.00010504108, z: 0.024704304}
