@@ -17,9 +17,9 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 924957c78e75dca4aa70aff6e9076648
-    name: MyExposedParam 1
+    name: Speed
   - guid: 7e66e85964a6f3749a74f3fd1c827d91
-    name: MyExposedParam
+    name: Pitch
   m_AudioMixerGroupViews:
   - guids:
     - a63d078c6fde6b945ad9186af20f0b17
