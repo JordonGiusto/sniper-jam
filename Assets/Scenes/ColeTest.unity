@@ -274,7 +274,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 1
+  weight: 0.306
   sharedProfile: {fileID: 11400000, guid: b45183aed6b7d4564988f2adcfe43196, type: 2}
 --- !u!4 &44995504
 Transform:
@@ -541,7 +541,7 @@ Transform:
   m_GameObject: {fileID: 1077150031}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 4.65}
+  m_LocalPosition: {x: -2.02, y: 0, z: 4.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -715,6 +715,16 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1077150035}
+    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
+        type: 3}
+      propertyPath: lockTime
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8040278343716416515, guid: 463f9bea3e345f74a8a6befa84ad9441,
+        type: 3}
+      propertyPath: reloadTime
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8360256209613453644, guid: 463f9bea3e345f74a8a6befa84ad9441,
         type: 3}
       propertyPath: m_Name
