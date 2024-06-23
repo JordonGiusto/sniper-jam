@@ -44,6 +44,8 @@ public class EnemyBehavior : MonoBehaviour
 
     Queue<Commands> triggerQueue;
 
+    Throwable distFocus;
+
     public bool Distracted
     {
         set
@@ -60,6 +62,7 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Throwable.causeDistraction += HandleDistraction;
         audioSource = GetComponent<AudioSource>();
         eyes = transform.Find("Eyes");
         offsets = new Vector3[viewGrid.x*viewGrid.y];
@@ -77,20 +80,34 @@ public class EnemyBehavior : MonoBehaviour
         CreateStateMachine();
     }
 
+    void HandleDistraction(Throwable d)
+    {
+        currentLock *= 0.5f;
+        distFocus = d;
+        Distracted = true;
+        
+    }
+
     void CreateStateMachine()
     {
         sm = new StateMachine<States, Commands>(States.Active, Commands.None, States.Reloading, States.Distracted);
+        
         sm.Addtransition(States.Active, States.Distracted, Commands.Distract);
+        sm.Addtransition(States.Distracted, States.Distracted, Commands.Distract);
         sm.Addtransition(States.Distracted, States.Active, Commands.LockIn);
+        sm.Addtransition(States.Distracted, States.Reloading, Commands.Reload);
+        
         sm.Addtransition(States.Active, States.Reloading, Commands.Reload);
         sm.Addtransition(States.Reloading, States.Active, Commands.LockIn);
 
-        sm.stateEnterActions[States.Reloading] += () => { StartCoroutine(ReloadRoutine()); };
 
+
+        sm.stateEnterActions[States.Reloading] += () => { StartCoroutine(ReloadRoutine()); };
+        //sm.stateExitActions[States.Distracted] += () => { currentLock = 0.2f; };
 
         sm.stateUpdateActions[States.Active] += (t) => Commands.None;
 
-        sm.stateEnterActions[States.Distracted] += WarningShot;
+        //sm.stateEnterActions[States.Distracted] += WarningShot;
         sm.stateUpdateActions[States.Distracted] += (t) =>
         {
             if(sm.timeInState > distractedTime)
@@ -111,6 +128,7 @@ public class EnemyBehavior : MonoBehaviour
                 LookForPlayer();
                 break;
             case States.Distracted:
+                TrackDebris();
                 break;
             case States.Reloading:
 
@@ -145,6 +163,19 @@ public class EnemyBehavior : MonoBehaviour
             triggerQueue.Clear();
         }
     }
+    void TrackDebris()
+    {
+        if(Physics.Raycast(eyes.position, (distFocus.transform.position-eyes.position).normalized, out RaycastHit hit) && hit.collider.TryGetComponent(out Throwable _))
+        {
+            audioSource.Play();
+            triggerQueue.Enqueue(Commands.Reload);
+            hit.rigidbody.AddForce((distFocus.transform.position - eyes.position).normalized*5, ForceMode.Impulse);
+            Instantiate(impact, hit.point, Quaternion.identity);
+
+
+        }
+    }
+
     int LookForPlayer()
     {
         int hits = 0;
@@ -220,7 +251,9 @@ public class EnemyBehavior : MonoBehaviour
 
     internal void die()
     {
+        playerController.UpdateObservation(0);
         Destroy(gameObject);
+
     }
 
     enum States

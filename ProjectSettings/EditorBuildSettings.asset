@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CreditsScene.unity
     guid: c2f6561e3e40d404db9aedcd6105fbee
+  - enabled: 1
+    path: Assets/Scenes/LoseScreen.unity
+    guid: 3b480b3e35149534d90329865b52c4f4
+  - enabled: 1
+    path: Assets/Scenes/WinScreen.unity
+    guid: 071aaf1f032f40d4faa6c081f9e77cc8
   m_configObjects: {}
