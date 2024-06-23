@@ -5,9 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
+        if(gameManager != null)
+        {
+            Destroy(this);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
     }
 
@@ -22,7 +28,7 @@ public class GameManager : MonoBehaviour
     }
     public void controlsButton()
     {
-        SceneManager.LoadScene("ControlsScene");
+        SceneManager.LoadScene("ControlsScreen");
 
     }
     public void creditsButton()
