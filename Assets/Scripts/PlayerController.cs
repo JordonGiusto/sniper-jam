@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
@@ -22,6 +21,9 @@ public class PlayerController : MonoBehaviour
     public GameObject scope;
 
 
+
+
+
     public Sniperjam sj;
 
     Rigidbody rb;
@@ -38,6 +40,11 @@ public class PlayerController : MonoBehaviour
     AudioSource breathing;
     [SerializeField]
     AudioSource impact;
+    [SerializeField]
+    AudioSource shot;
+
+    public GameObject heartContainer;
+
     float hr = 1;
     float Heartbeat
     {
@@ -47,7 +54,7 @@ public class PlayerController : MonoBehaviour
             hr = value;
             heart.outputAudioMixerGroup.audioMixer.SetFloat("Speed", hr/60);
             heart.outputAudioMixerGroup.audioMixer.SetFloat("Pitch", 60/hr);
-            heart.volume = 0.4f*hr / 60;
+            heart.volume = 0.1f*hr / 60;
 
 
 
@@ -75,6 +82,8 @@ public class PlayerController : MonoBehaviour
     float enemyLockLevel = 0f;
 
     float camXRotation;
+
+    bool reloaded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -119,7 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         hitLevel -= 0.08f*Time.deltaTime;
         hitLevel = hitLevel < 0 ? 0 : hitLevel;
-        Heartbeat = 60 + 60*(hitLevel);
+        Heartbeat = 60 + 50*(hitLevel) + 30 * enemyLockLevel;
 
         PPController.Singleton.volume.weight = 1 - Mathf.Exp(-2 * (enemyLockLevel + hitLevel));
         PPController.Singleton.vignette.color.SetValue(new UnityEngine.Rendering.ColorParameter(Color.Lerp(Color.black, Color.red, hitLevel), true));
@@ -217,12 +226,17 @@ public class PlayerController : MonoBehaviour
     private void handleADSInput(InputAction.CallbackContext context)
     {
         if(!hasGun) return;
+        
+
+
         if (context.performed)
         {
+            animator.ResetTrigger("unADS");
             animator.SetTrigger("ADS");
+            reloaded = true;
 
         }
-        else
+        else if(true)
         {
             animator.SetTrigger("unADS");
 
@@ -265,10 +279,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
         if(timeSinceFired < relaodTime) return;
-
+        if (!reloaded) return;
         timeSinceFired = 0;
-
+        reloaded = false;
         animator.SetTrigger("fire");
+
+        shot.Play();
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
 
@@ -349,6 +365,12 @@ public class PlayerController : MonoBehaviour
         
         hitLevel = 1;
         health -= 1;
+
+        if(heartContainer.transform.childCount > 0)
+        {
+            Destroy(heartContainer.transform.GetChild(0).gameObject);
+        }
+
         if(health <= 0)
         {
             unsubscribeEvents();
