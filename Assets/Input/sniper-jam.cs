@@ -326,7 +326,7 @@ public partial class @Sniperjam: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""eaa21a3f-c0a7-4c23-aff2-229a820b4ced"",
-                    ""path"": ""<Keyboard>/ctrl"",
+                    ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
