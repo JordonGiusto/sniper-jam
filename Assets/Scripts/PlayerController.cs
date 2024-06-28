@@ -306,7 +306,6 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
 
-        unsubscribeEvents();
         Cursor.lockState = CursorLockMode.None;
 
         SceneManager.LoadScene("WinScreen");
@@ -337,6 +336,7 @@ public class PlayerController : MonoBehaviour
 
 
         sj.Player.Fire.performed -= handleFireInput;
+        
     }
     void sunbscribeEvents()
     {
@@ -381,5 +381,9 @@ public class PlayerController : MonoBehaviour
         breathing.Play();
         impact.Play();
     }
+    private void OnDestroy()
+    {
+        unsubscribeEvents();
 
+    }
 }
